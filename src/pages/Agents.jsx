@@ -1,47 +1,58 @@
+// Agents.jsx (Simplified example)
 import React from 'react';
 import useFetch from '../hooks/useFetch';
-import { Link } from 'react-router-dom';
 
 const Agents = () => {
-  // Backend se agents ki list utha li
-  const { data: agents, loading, error } = useFetch("https://anvaya-project-backend.vercel.app/agents", []);
+  // Yahan se data fetch ho raha hai
+  const { data: agents, loading, error, setData } = useFetch("https://anvaya-project-backend.vercel.app/agents", []);
 
-  if (loading) return <div className="p-4">Ruk ja bhai, agents load ho rahe hain...</div>;
+  const deleteAgent = async (id) => {
+    if (window.confirm("Kya sach mein is Agent ko nikalna hai?")) {
+      try {
+        const res = await fetch(`https://anvaya-project-backend.vercel.app/agents/${id}`, {
+          method: "DELETE",
+        });
+        if (res.ok) {
+          // UI se turant hatane ke liye
+          setData(agents.filter(agent => agent._id !== id));
+          alert("Agent delete ho gaya!");
+        }
+      } catch (err) {
+        alert("Delete nahi ho paaya, network check karo.");
+      }
+    }
+  };
+
+  if (loading) return <div>Loading agents...</div>;
 
   return (
-    <div className="container-fluid p-4">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2>Sales Agent Management</h2>
-        {/* Ye button dabate hi naye agent wale page pe jayenge */}
-        <Link to="/agents/add" className="btn btn-success shadow-sm">
-          + Add New Agent
-        </Link>
-      </div>
-
-      <div className="card shadow-sm">
-        <div className="table-responsive">
-          <table className="table table-hover mb-0">
-            <thead className="table-light">
-              <tr>
-                <th>Agent Name</th>
-                <th>Email Address</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {agents.map(agent => (
-                <tr key={agent._id}>
-                  <td className="fw-bold text-primary">{agent.name}</td>
-                  <td>{agent.email || "N/A"}</td>
-                  <td>
-                    <span className="badge bg-info text-dark">Active</span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+    <div className="container mt-4">
+      <h3>All Sales Agents</h3>
+      <table className="table table-hover">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {agents.map(agent => (
+            <tr key={agent._id}>
+              <td>{agent.name}</td>
+              <td>{agent.email}</td>
+              <td>
+                <button 
+                  className="btn btn-danger btn-sm" 
+                  onClick={() => deleteAgent(agent._id)}
+                >
+                  Delete
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };

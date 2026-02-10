@@ -6,8 +6,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 const Dashboard = () => {
-  const { leads, loading } = useLeads();
-  
+const { leads, loading, deleteLead } = useLeads(); // Added deleteLead here  
   // States (Yahan engine fit kiya hai)
   const [activeFilter, setActiveFilter] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
@@ -167,6 +166,19 @@ const finalLeads = filteredLeads
         {/* Yahan agent ka naam sahi se dikhega */}
         <td>{lead.salesAgent?.name || "N/A"}</td>
         <td>{lead.priority}</td>
+        <td>
+          {/* Delete Button */}
+          <button 
+            className="btn btn-danger btn-sm"
+            onClick={() => {
+              if(window.confirm("Pakka delete karna hai?")) {
+                deleteLead(lead._id);
+              }
+            }}
+          >
+            Delete
+          </button>
+        </td>
       </tr>
     ))}
   </tbody>
