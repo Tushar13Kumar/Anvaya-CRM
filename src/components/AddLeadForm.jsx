@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { useLeads } from '../context/LeadContext';
+import { toast } from 'react-toastify';
+
 
 const AddLeadForm = ({ agents }) => {
   const [formData, setFormData] = useState({
@@ -10,33 +13,44 @@ const AddLeadForm = ({ agents }) => {
     timeToClose: 10
   });
 
+  const { fetchLeads } = useLeads(); // Context se function nikalo
+
+
+
   const [message, setMessage] = useState("");
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await fetch("https://anvaya-project-backend.vercel.app/leads", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    const response = await fetch("https://anvaya-project-backend.vercel.app/leads", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    });
+
+    if (response.ok) {
+      // 1. Context ko refresh maaro taaki list turant update ho
+      await fetchLeads(); 
+      
+      // 2. Success message dikhao
+     toast.setMessage("✅ Lead mast tarike se add ho gayi!");
+      
+      // 3. Form khali kar do
+      setFormData({ 
+        name: "", source: "Website", salesAgent: "", 
+        status: "New", priority: "Medium", timeToClose: 10 
       });
-
-      if (response.ok) {
-        setMessage("✅ Lead mast tarike se add ho gayi!");
-        // Form khali karne ka jugaad
-        setFormData({ name: "", source: "Website", salesAgent: "", status: "New", priority: "Medium", timeToClose: 10 });
-      } else {
-        setMessage("❌ Backend ne mana kar diya!");
-      }
-    } catch (err) {
-      setMessage("❌ Bhai, network ka locha hai!");
+    } else {
+      toast.setMessage("❌ Backend ne mana kar diya!");
     }
-  };
-
+  } catch (err) {
+    toast.setMessage("❌ Bhai, network ka locha hai!");
+  }
+};
   return (
     <div className="card p-4 shadow-sm border-0 mt-4" style={{ backgroundColor: '#f8f9fa' }}>
       <h4 className="mb-4">🚀 Nayi Lead Daalo</h4>

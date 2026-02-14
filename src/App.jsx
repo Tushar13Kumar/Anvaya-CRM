@@ -10,16 +10,19 @@ import AddAgent from "./pages/AddAgent";
 import Reports from "./pages/Reports";
 import LeadStatusView from "./pages/LeadStatusView";
 import SalesAgentView from "./pages/SalesAgentView";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   return (
     <LeadProvider>
       <Router>
-        <div className="d-flex">
-          {/* Sidebar ko yahan rakha taaki ye har page pe dikhe */}
-          <Sidebar /> 
-          
-          <div className="flex-grow-1">
+       <div className="container-fluid p-0">
+  <div className="d-flex">
+    <div style={{ minWidth: '250px', maxWidth: '250px' }}>
+      <Sidebar />
+    </div>
+    <div className="flex-grow-1 bg-light min-vh-100 p-4">
             <Routes>
               {/* "/" pe Dashboard dikhega */}
               <Route path="/" element={<Dashboard />} />
@@ -32,10 +35,10 @@ function App() {
                <Route path="/reports" element={<Reports />} />
                <Route path="/status-view" element={<LeadStatusView />} /> {/* Add this line */}
               <Route path="/agents/add" element={<AddAgent />} />
-             
-            </Routes>
+             </Routes>
           </div>
         </div>
+         </div>
       </Router>
     </LeadProvider>
   );

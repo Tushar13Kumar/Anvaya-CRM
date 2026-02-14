@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import useFetch from '../hooks/useFetch'; // Jo tune pehle banaya tha
+import { toast } from 'react-toastify';
 
 const LeadDetails = () => {
   const { id } = useParams();
@@ -27,14 +28,14 @@ const LeadDetails = () => {
   if (res.ok) {
     const updated = await res.json();
     setLead(updated);
-    alert("Status badal gaya!");
+    toast.success("Status badal gaya!");
   }
 };
 
   const handleAddComment = async () => {
     // 3. Check karo dono cheezein hain ya nahi
     if (!newComment || !selectedAgent) {
-      return alert("Bhai, comment likh aur Agent bhi toh chuno!");
+      return toast.warn("Bhai, comment likh aur Agent bhi toh chuno!");
     }
 
     const response = await fetch(`https://anvaya-project-backend.vercel.app/leads/${id}/comments`, {

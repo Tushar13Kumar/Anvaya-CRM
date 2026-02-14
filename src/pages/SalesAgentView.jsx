@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLeads } from '../context/LeadContext';
 import { Link } from 'react-router-dom';
 import useFetch from '../hooks/useFetch';
+import { toast } from 'react-toastify';
 
 const SalesAgentView = () => {
   const { leads, loading: leadsLoading } = useLeads();

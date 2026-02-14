@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import useFetch from "../hooks/useFetch";
+import { toast } from 'react-toastify';
 
 const LeadContext = createContext();
 
@@ -26,8 +27,16 @@ const deleteLead = async (id) => {
   }
 };
 
+const fetchLeads = async () => {
+    const res = await fetch("https://anvaya-project-backend.vercel.app/leads");
+    const data = await res.json();
+    setLeads(data);
+  };
+
+  useEffect(() => { fetchLeads(); }, []);
+
   return (
-    <LeadContext.Provider value={{ leads, loading, error, deleteLead }}>
+    <LeadContext.Provider value={{ leads, loading, error, deleteLead , fetchLeads }}>
       {children}
     </LeadContext.Provider>
   );

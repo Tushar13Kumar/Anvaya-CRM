@@ -1,6 +1,7 @@
 // Agents.jsx (Simplified example)
 import React from 'react';
 import useFetch from '../hooks/useFetch';
+import { toast } from 'react-toastify';
 
 const Agents = () => {
   // Yahan se data fetch ho raha hai
@@ -15,10 +16,10 @@ const Agents = () => {
         if (res.ok) {
           // UI se turant hatane ke liye
           setData(agents.filter(agent => agent._id !== id));
-          alert("Agent delete ho gaya!");
+          toast.info("Agent delete ho gaya!");
         }
       } catch (err) {
-        alert("Delete nahi ho paaya, network check karo.");
+        toast.info("Delete nahi ho paaya, network check karo.");
       }
     }
   };

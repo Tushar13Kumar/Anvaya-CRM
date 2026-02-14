@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 
 const AddAgent = () => {
@@ -15,7 +16,7 @@ const AddAgent = () => {
     });
 
     if (res.ok) {
-      alert("Mubarak ho! Naya agent team mein shamil.");
+      toast.success("Mubarak ho! Naya agent team mein shamil.");
       navigate("/agents"); // Wapas list pe bhej dega
     }
   };
