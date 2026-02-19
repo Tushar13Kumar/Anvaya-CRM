@@ -1,0 +1,121 @@
+/* MAIN LAYOUT */
+
+html, body, #root {
+  height: 100%;
+}
+
+.app-layout {
+  min-height: 100vh;
+  align-items: stretch;
+}
+
+
+/* SIDEBAR */
+
+.sidebar {
+  width: 250px;
+  min-height: 100vh;
+  background: white;
+  border-right: 1px solid #eee;
+}
+
+
+/* MAIN CONTENT */
+
+.main-content {
+  flex: 1;
+  background: #f9fafb;
+  padding: 24px;
+}
+
+
+/* DASHBOARD GRID */
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 24px;
+  align-items: start;
+}
+
+
+/* CARD */
+
+.crm-card {
+
+  border-radius: 12px;
+
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+
+  border: none;
+
+  background: white;
+
+}
+
+
+/* TABLE */
+
+.table td {
+
+  padding: 14px;
+
+}
+
+
+.table tr:hover {
+
+  background: #f9fafb;
+
+}
+
+
+/* BUTTON */
+
+.btn-primary {
+
+  padding: 12px;
+
+  font-weight: 600;
+
+  border-radius: 8px;
+
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+
+}
+
+
+.btn-primary:hover {
+
+  transform: translateY(-1px);
+
+}
+
+
+/* SIDEBAR LINKS */
+
+.sidebar .nav-link {
+
+  border-radius: 8px;
+
+  padding: 10px;
+
+  color: #333;
+
+}
+
+
+.sidebar .nav-link:hover {
+
+  background: #f3f4f6;
+
+}
+
+
+.sidebar .nav-link.active {
+
+  background: #2563eb;
+
+  color: white;
+
+}

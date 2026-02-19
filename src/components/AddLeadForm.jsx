@@ -52,8 +52,8 @@ const AddLeadForm = ({ agents }) => {
   }
 };
   return (
-    <div className="card p-4 shadow-sm border-0 mt-4" style={{ backgroundColor: '#f8f9fa' }}>
-      <h4 className="mb-4">🚀 Nayi Lead Daalo</h4>
+    <div  style={{ backgroundColor: '#f8f9fa' }}>
+      
       {message && <div className="alert alert-info">{message}</div>}
       
       <form onSubmit={handleSubmit}>

@@ -3,38 +3,62 @@ import { toast } from 'react-toastify';
 
 const Sidebar = () => {
   return (
-    <nav className="bg-light sidebar vh-100 p-3 shadow-sm" style={{ width: '250px' }}>
-      <h4 className="mb-4">Anvaya CRM</h4>
-      <ul className="nav flex-column">
-        <li className="nav-item mb-2">
-          {/* NavLink use kar 'a' tag ki jagah, taaki page refresh na ho */}
-          <NavLink to="/" className={({ isActive }) => `nav-link ${isActive ? 'active fw-bold text-primary' : 'text-dark'}`}>
-            Leads (Dashboard)
-          </NavLink>
-        </li>
-       <li className="nav-item mb-2">
-  <NavLink to="/sales-agent-view" className={({ isActive }) => `nav-link ${isActive ? 'active fw-bold text-primary' : 'text-dark'}`}>
-    Sales (Agent View)
-  </NavLink>
-</li>
-        <li className="nav-item mb-2">
-          <NavLink to="/agents" className={({ isActive }) => `nav-link ${isActive ? 'active fw-bold text-primary' : 'text-dark'}`}>
-            Agents
-          </NavLink>
-        </li>
-         <li className="nav-item mb-2">
-          <NavLink to="/reports" className={({ isActive }) => `nav-link ${isActive ? 'active fw-bold text-primary' : 'text-dark'}`}>
-            Reports
-          </NavLink>
-        </li>
-        <li className="nav-item mb-2">
-  <NavLink to="/status-view" className={({ isActive }) => `nav-link ${isActive ? 'active fw-bold text-primary' : 'text-dark'}`}>
-    Leads by Status
-  </NavLink>
-</li>
-      </ul>
-    </nav>
+    <div
+      className="bg-white border-end shadow-sm"
+      style={{
+        width: "250px",
+        height: "100vh",
+        position: "sticky",
+        top: 0
+      }}
+    >
+
+      <div className="p-3">
+
+        <h4 className="mb-4 fw-bold">
+          Anvaya CRM
+        </h4>
+
+        <ul className="nav flex-column">
+
+          <li className="nav-item mb-2">
+            <NavLink to="/" className="nav-link">
+              Leads
+            </NavLink>
+          </li>
+
+          <li className="nav-item mb-2">
+            <NavLink to="/sales-agent-view" className="nav-link">
+              Sales
+            </NavLink>
+          </li>
+
+          <li className="nav-item mb-2">
+            <NavLink to="/agents" className="nav-link">
+              Agents
+            </NavLink>
+          </li>
+
+          <li className="nav-item mb-2">
+            <NavLink to="/reports" className="nav-link">
+              Reports
+            </NavLink>
+          </li>
+
+          <li className="nav-item">
+            <NavLink to="/status-view" className="nav-link">
+              Leads by Status
+            </NavLink>
+          </li>
+
+        </ul>
+
+      </div>
+
+    </div>
   );
 };
+
+
 
 export default Sidebar;
