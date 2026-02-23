@@ -1,7 +1,13 @@
 /* MAIN LAYOUT */
 
-html, body, #root {
+/* MAIN LAYOUT */
+html, body {
   height: 100%;
+}
+
+#root {
+  height: 100%;
+  min-width: 100vw; /* Ye wali line add karni hai bas! */
 }
 
 .app-layout {

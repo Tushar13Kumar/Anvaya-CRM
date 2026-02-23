@@ -69,8 +69,9 @@ const LeadStatusView = () => {
         </div>
       </div>
 
-      {/* 2. MAIN CONTENT AREA (Fills Remaining Space) */}
-      <div className="flex-grow-1 d-flex flex-column vh-100 overflow-auto">
+     
+   {/* 2. MAIN CONTENT AREA (Fills Remaining Space) */}
+<div className="flex-grow-1 d-flex flex-column">
         
         {/* HEADER AREA */}
         <header className="bg-white border-bottom p-4 sticky-top shadow-sm w-100">

@@ -76,7 +76,8 @@ const Reports = () => {
       </div>
 
       {/* MAIN CONTENT AREA */}
-      <div className="flex-grow-1 d-flex flex-column vh-100 overflow-auto">
+  
+<div className="flex-grow-1 d-flex flex-column">
         
         {/* HEADER - BUTTON SHIFTED TO RIGHT CORNER */}
         <header className="bg-white border-bottom p-4 sticky-top shadow-sm w-100">
