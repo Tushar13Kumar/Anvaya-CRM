@@ -1,30 +1,47 @@
 import React from 'react';
 import useFetch from '../hooks/useFetch';
 import { toast } from 'react-toastify';
+import Swal from 'sweetalert2'; // 👈 1. SweetAlert import karle
 
 const Agents = () => {
   const { data: agents, loading, error, setData } = useFetch("https://anvaya-project-backend.vercel.app/agents", []);
 
   const deleteAgent = async (id) => {
-    // Replaced standard window.confirm with a cleaner logic if needed, 
-    // but kept it for functionality as per your request.
-    if (window.confirm("Kya sach mein is Agent ko nikalna hai?")) {
-      try {
-        const res = await fetch(`https://anvaya-project-backend.vercel.app/agents/${id}`, {
-          method: "DELETE",
-        });
-        if (res.ok) {
-          setData(agents.filter(agent => agent._id !== id));
-          toast.success("Agent successfully removed!", {
-            position: "top-right",
-            autoClose: 3000,
+    // 👈 2. Ye raha naya React Alert logic
+    Swal.fire({
+      title: 'Sure ho bhai?',
+      text: "Is agent ko nikalne ke baad wapas nahi la paoge!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#0d6efd', // Bootstrap primary color
+      cancelButtonColor: '#dc3545',  // Bootstrap danger color
+      confirmButtonText: 'Haan, nikal do!',
+      cancelButtonText: 'Nahi, rehne do'
+    }).then(async (result) => {
+      
+      // Agar user ne "Haan" (Confirm) dabaya
+      if (result.isConfirmed) {
+        try {
+          const res = await fetch(`https://anvaya-project-backend.vercel.app/agents/${id}`, {
+            method: "DELETE",
           });
+
+          if (res.ok) {
+            setData(agents.filter(agent => agent._id !== id));
+            
+            // Delete hone ke baad chhota sa toast dikha do
+            toast.success("Agent ka patta saaf!"); 
+          } else {
+            toast.error("Server ne mana kar diya!");
+          }
+        } catch (err) {
+          toast.error("Network issue hai bhai!");
         }
-      } catch (err) {
-        toast.error("Failed to delete. Please check your connection.");
       }
-    }
+    });
   };
+
+  // ... baaki pura code same rahega
 
   if (loading) {
     return (

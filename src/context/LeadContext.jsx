@@ -15,15 +15,15 @@ export const LeadProvider = ({ children }) => {
   // LeadContext.jsx mein deleteLead function update karo:
 const deleteLead = async (id) => {
   try {
-    const res = await fetch(`https://anvaya-project-backend.vercel.app/leads/${id}`, {
-      method: "DELETE"
+    const response = await fetch(`https://anvaya-project-backend.vercel.app/leads/${id}`, {
+      method: 'DELETE',
     });
-    if (res.ok) {
-      // Local state update kar rahe hain
-      setLeads(prevLeads => prevLeads.filter(l => l._id !== id));
+    if (response.ok) {
+      setLeads(prev => prev.filter(l => l._id !== id));
+      toast.success("Lead delete ho gayi!"); // 👈 Mast alert
     }
   } catch (err) {
-    console.error("Delete failed", err);
+    toast.error("Server down hai shayad!"); 
   }
 };
 

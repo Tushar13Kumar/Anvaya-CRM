@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useLeads } from '../context/LeadContext';
 import { toast } from 'react-toastify';
 
-
 const AddLeadForm = ({ agents }) => {
   const [formData, setFormData] = useState({
     name: "",
@@ -13,70 +12,71 @@ const AddLeadForm = ({ agents }) => {
     timeToClose: 10
   });
 
-  const { fetchLeads } = useLeads(); // Context se function nikalo
-
-
-
-  const [message, setMessage] = useState("");
+  const { fetchLeads } = useLeads();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
-  try {
-    const response = await fetch("https://anvaya-project-backend.vercel.app/leads", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
-    });
-
-    if (response.ok) {
-      // 1. Context ko refresh maaro taaki list turant update ho
-      await fetchLeads(); 
-      
-      // 2. Success message dikhao
-     toast.setMessage("✅ Lead mast tarike se add ho gayi!");
-      
-      // 3. Form khali kar do
-      setFormData({ 
-        name: "", source: "Website", salesAgent: "", 
-        status: "New", priority: "Medium", timeToClose: 10 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch("https://anvaya-project-backend.vercel.app/leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
       });
-    } else {
-      toast.setMessage("❌ Backend ne mana kar diya!");
+
+      if (response.ok) {
+        await fetchLeads(); 
+        
+        // Corrected React-Toastify syntax
+        toast.success("Lead created successfully!");
+        
+        setFormData({ 
+          name: "", source: "Website", salesAgent: "", 
+          status: "New", priority: "Medium", timeToClose: 10 
+        });
+      } else {
+        toast.error("Failed to save lead. Please check your data.");
+      }
+    } catch (err) {
+      toast.error("Network error. Please try again later.");
     }
-  } catch (err) {
-    toast.setMessage("❌ Bhai, network ka locha hai!");
-  }
-};
+  };
+
   return (
-    <div  style={{ backgroundColor: '#f8f9fa' }}>
-      
-      {message && <div className="alert alert-info">{message}</div>}
-      
+    <div className="p-2">
       <form onSubmit={handleSubmit}>
         {/* Row 1: Name */}
         <div className="mb-3">
-          <label className="form-label fw-bold">Client ka Naam</label>
-          <input type="text" name="name" className="form-control" value={formData.name} onChange={handleChange} required placeholder="ex: Pappu Yadav" />
+          <label className="form-label fw-semibold text-secondary">Client Full Name</label>
+          <input 
+            type="text" 
+            name="name" 
+            className="form-control" 
+            value={formData.name} 
+            onChange={handleChange} 
+            required 
+            placeholder="e.g. John Doe" 
+          />
         </div>
 
         {/* Row 2: Source & Agent */}
         <div className="row">
           <div className="col-md-6 mb-3">
-            <label className="form-label fw-bold">Source</label>
+            <label className="form-label fw-semibold text-secondary">Lead Source</label>
             <select name="source" className="form-select" value={formData.source} onChange={handleChange}>
               <option value="Website">Website</option>
               <option value="Cold Call">Cold Call</option>
               <option value="Referral">Referral</option>
+              <option value="Social Media">Social Media</option>
             </select>
           </div>
           <div className="col-md-6 mb-3">
-            <label className="form-label fw-bold">Sales Agent</label>
+            <label className="form-label fw-semibold text-secondary">Assigned Agent</label>
             <select name="salesAgent" className="form-select" value={formData.salesAgent} onChange={handleChange} required>
-              <option value="">Agent Chuno...</option>
+              <option value="">Select Agent...</option>
               {agents.map(agent => (
                 <option key={agent._id} value={agent._id}>{agent.name}</option>
               ))}
@@ -84,10 +84,10 @@ const AddLeadForm = ({ agents }) => {
           </div>
         </div>
 
-        {/* Row 3: Status & Priority (NAYA!) */}
+        {/* Row 3: Status & Priority */}
         <div className="row">
           <div className="col-md-6 mb-3">
-            <label className="form-label fw-bold">Lead Status</label>
+            <label className="form-label fw-semibold text-secondary">Pipeline Status</label>
             <select name="status" className="form-select" value={formData.status} onChange={handleChange}>
               <option value="New">New</option>
               <option value="Contacted">Contacted</option>
@@ -96,23 +96,32 @@ const AddLeadForm = ({ agents }) => {
             </select>
           </div>
           <div className="col-md-6 mb-3">
-            <label className="form-label fw-bold">Priority</label>
+            <label className="form-label fw-semibold text-secondary">Priority Level</label>
             <select name="priority" className="form-select" value={formData.priority} onChange={handleChange}>
-              <option value="High">High (Garram)</option>
-              <option value="Medium">Medium (Theek hai)</option>
-              <option value="Low">Low (Thanda)</option>
+              <option value="High">High</option>
+              <option value="Medium">Medium</option>
+              <option value="Low">Low</option>
             </select>
           </div>
         </div>
 
-        {/* Row 4: Time to Close (NAYA!) */}
+        {/* Row 4: Time to Close */}
         <div className="mb-4">
-          <label className="form-label fw-bold">Kitne din mein close hogi? (Time to Close)</label>
-          <input type="number" name="timeToClose" className="form-control" value={formData.timeToClose} onChange={handleChange} />
-          <small className="text-muted">Anumanit din (Estimated Days)</small>
+          <label className="form-label fw-semibold text-secondary">Estimated Conversion (Days)</label>
+          <input 
+            type="number" 
+            name="timeToClose" 
+            className="form-control" 
+            value={formData.timeToClose} 
+            onChange={handleChange} 
+            min="1"
+          />
+          <small className="text-muted">Expected timeframe to close this deal.</small>
         </div>
 
-        <button type="submit" className="btn btn-primary w-100 fw-bold py-2">Lead Create Kar Do! 💥</button>
+        <button type="submit" className="btn btn-primary w-100 fw-bold py-2 shadow-sm">
+          Create Lead Opportunity
+        </button>
       </form>
     </div>
   );

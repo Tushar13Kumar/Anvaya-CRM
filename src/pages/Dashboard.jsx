@@ -3,6 +3,7 @@ import { useLeads } from '../context/LeadContext';
 import AddLeadForm from '../components/AddLeadForm';
 import useFetch from '../hooks/useFetch';
 import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const Dashboard = () => {
 
@@ -17,6 +18,8 @@ const Dashboard = () => {
     "https://anvaya-project-backend.vercel.app/agents",
     []
   );
+
+  
 
 
   /* ---------- STATS ---------- */
