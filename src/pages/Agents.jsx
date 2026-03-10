@@ -2,6 +2,7 @@ import React from 'react';
 import useFetch from '../hooks/useFetch';
 import { toast } from 'react-toastify';
 import Swal from 'sweetalert2'; // 👈 1. SweetAlert import karle
+import { Link } from 'react-router-dom'; // Add this import
 
 const Agents = () => {
   const { data: agents, loading, error, setData } = useFetch("https://anvaya-project-backend.vercel.app/agents", []);
@@ -76,8 +77,10 @@ const Agents = () => {
              </div>
              <div className="vr mx-2 d-none d-md-block"></div>
              <button className="btn btn-primary rounded-pill px-4 shadow-sm py-2">
-               <i className="bi bi-person-plus-fill me-2"></i>Add New Agent
-             </button>
+{/* Change the button to a Link or wrap it */}
+<Link to="/agents/add" className="btn btn-primary rounded-pill px-4 shadow-sm py-2">
+  <i className="bi bi-person-plus-fill me-2"></i>Add New Agent
+</Link>             </button>
           </div>
         </div>
       </header>
