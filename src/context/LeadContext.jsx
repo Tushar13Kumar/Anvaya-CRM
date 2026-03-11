@@ -14,16 +14,19 @@ export const LeadProvider = ({ children }) => {
 
   // LeadContext.jsx mein deleteLead function update karo:
 const deleteLead = async (id) => {
-  try {
-    const response = await fetch(`https://anvaya-project-backend.vercel.app/leads/${id}`, {
-      method: 'DELETE',
-    });
-    if (response.ok) {
-      setLeads(prev => prev.filter(l => l._id !== id));
-      toast.success("Lead delete ho gayi!"); // 👈 Mast alert
+  if (window.confirm("Bhai pakka delete karna hai?")) {
+    try {
+      const response = await fetch(`https://anvaya-project-backend.vercel.app/leads/${id}`, {
+        method: 'DELETE',
+      });
+      if (response.ok) {
+        // Bina refresh kiye list se hatane ke liye:
+        setLeads(prev => prev.filter(l => l._id !== id));
+        toast.success("Lead khalaas!");
+      }
+    } catch (err) {
+      toast.error("Network ka locha hai!");
     }
-  } catch (err) {
-    toast.error("Server down hai shayad!"); 
   }
 };
 
@@ -36,11 +39,17 @@ const fetchLeads = async () => {
   useEffect(() => { fetchLeads(); }, []);
 
   return (
-    <LeadContext.Provider value={{ leads, loading, error, deleteLead , fetchLeads }}>
+    <LeadContext.Provider value={{ leads, loading, error, deleteLead, fetchLeads }}>
       {children}
     </LeadContext.Provider>
   );
 };
 
-// THIS IS THE LINE CAUSING YOUR ERROR
-export const useLeads = () => useContext(LeadContext);
+// ISKO EKDUM ALAG LINE PE RAKHO
+export const useLeads = () => {
+  const context = useContext(LeadContext);
+  if (!context) {
+    throw new Error("useLeads must be used within a LeadProvider");
+  }
+  return context;
+};

@@ -4,15 +4,16 @@ import { Link } from 'react-router-dom';
 import useFetch from '../hooks/useFetch';
 
 const SalesAgentView = () => {
-  const { leads, loading: leadsLoading } = useLeads();
+  const { leads, loading: leadsLoading, deleteLead } = useLeads();
   const { data: agents, loading: agentsLoading } = useFetch("https://anvaya-project-backend.vercel.app/agents", []);
 
-  // 1. Initial state "All" set ki hai taaki default mein sab dikhe
+  // YE LINES MISSING THI - Inhe add kar lo
   const [selectedAgentId, setSelectedAgentId] = useState("All");
   const [statusFilter, setStatusFilter] = useState("All");
   const [priorityFilter, setPriorityFilter] = useState("All");
   const [sortBy, setSortBy] = useState("Time to Close");
 
+  // Baaki loading wala logic...
   if (leadsLoading || agentsLoading) {
     return (
       <div className="d-flex justify-content-center align-items-center vh-100">
@@ -22,11 +23,11 @@ const SalesAgentView = () => {
       </div>
     );
   }
-
-  // 2. Logic: Agar "All" selected hai toh leads filter mat karo
+  
+  // Ab tera filter wala logic chalne lagega
   const agentLeads = selectedAgentId === "All" 
     ? leads 
-    : leads?.filter(lead => lead.salesAgent?._id === selectedAgentId);
+    : leads?.filter(lead => lead.salesAgent?._id === selectedAgentId);       
 
   // Status aur Priority filtering
   const filteredLeads = agentLeads?.filter(lead => {
@@ -49,6 +50,21 @@ const SalesAgentView = () => {
     const colors = { High: 'bg-danger text-white', Medium: 'bg-warning text-dark', Low: 'bg-info text-dark' };
     return <span className={`badge ${colors[priority] || 'bg-secondary'}`}>{priority}</span>;
   };
+  const handleDeleteAgent = async (agentId) => {
+  if (window.confirm("Agent ko nikaal de team se?")) {
+    try {
+      const res = await fetch(`https://anvaya-project-backend.vercel.app/agents/${agentId}`, {
+        method: "DELETE"
+      });
+      if (res.ok) {
+        toast.success("Agent gaya!");
+        window.location.reload(); // Quick fix: list update karne ke liye refresh kar lo
+      }
+    } catch (err) {
+      toast.error("Agent nahi gaya, dheet hai!");
+    }
+  }
+};
 
   return (
     <div className="d-flex min-vh-100 bg-light">
@@ -73,15 +89,22 @@ const SalesAgentView = () => {
             <i className="bi bi-people-fill me-2"></i> All Agents
           </button>
 
-          {agents.map(agent => (
-            <button
-              key={agent._id}
-              className={`list-group-item list-group-item-action py-3 px-4 border-0 ${selectedAgentId === agent._id ? 'bg-primary-subtle text-primary border-start border-4 border-primary fw-bold' : ''}`}
-              onClick={() => setSelectedAgentId(agent._id)}
-            >
-              <i className="bi bi-person-badge me-2"></i>{agent.name}
-            </button>
-          ))}
+         {agents.map(agent => (
+  <div key={agent._id} className="d-flex align-items-center justify-content-between pe-3 border-bottom">
+    <button
+      className={`list-group-item list-group-item-action py-3 px-4 border-0 ${selectedAgentId === agent._id ? 'bg-primary-subtle text-primary' : ''}`}
+      onClick={() => setSelectedAgentId(agent._id)}
+    >
+      <i className="bi bi-person-badge me-2"></i>{agent.name}
+    </button>
+    {/* Agent udane ka button */}
+    <i 
+      className="bi bi-trash text-danger cursor-pointer" 
+      style={{ cursor: 'pointer' }}
+      onClick={() => handleDeleteAgent(agent._id)}
+    ></i>
+  </div>
+))}
         </div>
       </div>
 
@@ -180,11 +203,20 @@ const SalesAgentView = () => {
                             {lead.timeToClose} Days
                           </div>
                         </td>
-                        <td className="text-end pe-4">
-                          <Link to={`/lead/${lead._id}`} className="btn btn-sm btn-outline-primary rounded-pill px-3">
-                            View Details
-                          </Link>
-                        </td>
+                       <td className="text-end pe-4">
+  <div className="d-flex gap-2 justify-content-end">
+    <Link to={`/lead/${lead._id}`} className="btn btn-sm btn-outline-primary rounded-pill px-3">
+      View
+    </Link>
+    {/* Lead udane ka button */}
+    <button 
+      className="btn btn-sm btn-danger rounded-circle"
+      onClick={() => deleteLead(lead._id)}
+    >
+      <i className="bi bi-trash"> Delete </i>
+    </button>
+  </div>
+</td>
                       </tr>
                     ))
                   ) : (

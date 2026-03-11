@@ -161,7 +161,7 @@ const LeadStatusView = () => {
                         </td>
                         <td className="pe-4 py-3 text-end">
                            <Link to={`/lead/${lead._id}`} className="btn btn-sm btn-light border rounded-circle">
-                              <i className="bi bi-chevron-right"></i>
+                              <i className="bi bi-chevron-right">Comment</i>
                            </Link>
                         </td>
                       </tr>
