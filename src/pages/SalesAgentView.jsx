@@ -2,18 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { useLeads } from '../context/LeadContext';
 import { Link } from 'react-router-dom';
 import useFetch from '../hooks/useFetch';
+import { toast, ToastContainer } from 'react-toastify'; 
+import 'react-toastify/dist/ReactToastify.css';
 
 const SalesAgentView = () => {
   const { leads, loading: leadsLoading, deleteLead } = useLeads();
   const { data: agents, loading: agentsLoading } = useFetch("https://anvaya-project-backend.vercel.app/agents", []);
 
-  // YE LINES MISSING THI - Inhe add kar lo
   const [selectedAgentId, setSelectedAgentId] = useState("All");
   const [statusFilter, setStatusFilter] = useState("All");
   const [priorityFilter, setPriorityFilter] = useState("All");
   const [sortBy, setSortBy] = useState("Time to Close");
 
-  // Baaki loading wala logic...
   if (leadsLoading || agentsLoading) {
     return (
       <div className="d-flex justify-content-center align-items-center vh-100">
@@ -23,20 +23,65 @@ const SalesAgentView = () => {
       </div>
     );
   }
-  
-  // Ab tera filter wala logic chalne lagega
+
+  // Stylish Confirmation Function
+  const confirmAction = (id, type) => {
+    toast(
+      ({ closeToast }) => (
+        <div className="p-2">
+          <p className="mb-2 fw-bold">Bhai, pakka udaana hai?</p>
+          <div className="d-flex gap-2">
+            <button 
+              className="btn btn-sm btn-danger px-3" 
+              onClick={() => { 
+                type === 'lead' ? executeDeleteLead(id) : executeDeleteAgent(id);
+                closeToast();
+              }}
+            >
+              Haan, uda de!
+            </button>
+            <button className="btn btn-sm btn-secondary px-3" onClick={closeToast}>Nahi</button>
+          </div>
+        </div>
+      ),
+      { autoClose: false, closeOnClick: false, draggable: false }
+    );
+  };
+
+  const executeDeleteAgent = async (agentId) => {
+    try {
+      const res = await fetch(`https://anvaya-project-backend.vercel.app/agents/${agentId}`, {
+        method: "DELETE"
+      });
+      if (res.ok) {
+        toast.success("Agent removed successfully!");
+        setTimeout(() => window.location.reload(), 1500); 
+      }
+    } catch (err) {
+      toast.error("Failed to remove agent.");
+    }
+  };
+
+  const executeDeleteLead = async (id) => {
+    try {
+      await deleteLead(id);
+      toast.success("Lead khalaas! ✅"); 
+    } catch (err) {
+      toast.error("Lead delete nahi hui. ❌");
+    }
+  };
+
+  // Filters logic remains same...
   const agentLeads = selectedAgentId === "All" 
     ? leads 
     : leads?.filter(lead => lead.salesAgent?._id === selectedAgentId);       
 
-  // Status aur Priority filtering
   const filteredLeads = agentLeads?.filter(lead => {
     const matchesStatus = statusFilter === "All" || lead.status === statusFilter;
     const matchesPriority = priorityFilter === "All" || lead.priority === priorityFilter;
     return matchesStatus && matchesPriority;
   });
 
-  // Sorting logic
   const sortedLeads = [...(filteredLeads || [])].sort((a, b) => {
     if (sortBy === "Time to Close") return (a.timeToClose || 0) - (b.timeToClose || 0);
     return 0;
@@ -50,26 +95,13 @@ const SalesAgentView = () => {
     const colors = { High: 'bg-danger text-white', Medium: 'bg-warning text-dark', Low: 'bg-info text-dark' };
     return <span className={`badge ${colors[priority] || 'bg-secondary'}`}>{priority}</span>;
   };
-  const handleDeleteAgent = async (agentId) => {
-  if (window.confirm("Agent ko nikaal de team se?")) {
-    try {
-      const res = await fetch(`https://anvaya-project-backend.vercel.app/agents/${agentId}`, {
-        method: "DELETE"
-      });
-      if (res.ok) {
-        toast.success("Agent gaya!");
-        window.location.reload(); // Quick fix: list update karne ke liye refresh kar lo
-      }
-    } catch (err) {
-      toast.error("Agent nahi gaya, dheet hai!");
-    }
-  }
-};
 
   return (
     <div className="d-flex min-vh-100 bg-light">
-      
-      {/* SIDEBAR - Isko fixed rakha hai */}
+      {/* ToastContainer yahan hona zaroori hai! */}
+      <ToastContainer position="top-right" theme="colored" />
+
+      {/* SIDEBAR */}
       <div className="bg-white border-end shadow-sm vh-100 sticky-top" style={{ width: '280px' }}>
         <div className="p-4 border-bottom bg-primary text-white">
           <h5 className="mb-0 fw-bold">Anvaya CRM</h5>
@@ -81,7 +113,6 @@ const SalesAgentView = () => {
         </div>
 
         <div className="list-group list-group-flush overflow-auto" style={{ maxHeight: 'calc(100vh - 160px)' }}>
-          {/* 3. Sabse upar "All Agents" ka option daal diya */}
           <button
             className={`list-group-item list-group-item-action py-3 px-4 border-0 ${selectedAgentId === "All" ? 'bg-primary-subtle text-primary border-start border-4 border-primary fw-bold' : ''}`}
             onClick={() => setSelectedAgentId("All")}
@@ -89,30 +120,27 @@ const SalesAgentView = () => {
             <i className="bi bi-people-fill me-2"></i> All Agents
           </button>
 
-         {agents.map(agent => (
-  <div key={agent._id} className="d-flex align-items-center justify-content-between pe-3 border-bottom">
-    <button
-      className={`list-group-item list-group-item-action py-3 px-4 border-0 ${selectedAgentId === agent._id ? 'bg-primary-subtle text-primary' : ''}`}
-      onClick={() => setSelectedAgentId(agent._id)}
-    >
-      <i className="bi bi-person-badge me-2"></i>{agent.name}
-    </button>
-    {/* Agent udane ka button */}
-    <i 
-      className="bi bi-trash text-danger cursor-pointer" 
-      style={{ cursor: 'pointer' }}
-      onClick={() => handleDeleteAgent(agent._id)}
-    ></i>
-  </div>
-))}
+          {agents.map(agent => (
+            <div key={agent._id} className="d-flex align-items-center justify-content-between pe-3 border-bottom">
+              <button
+                className={`list-group-item list-group-item-action py-3 px-4 border-0 flex-grow-1 ${selectedAgentId === agent._id ? 'bg-primary-subtle text-primary' : ''}`}
+                onClick={() => setSelectedAgentId(agent._id)}
+              >
+                <i className="bi bi-person-badge me-2"></i>{agent.name}
+              </button>
+              <i 
+                className="bi bi-trash text-danger p-2" 
+                style={{ cursor: 'pointer' }}
+                onClick={() => confirmAction(agent._id, 'agent')}
+              ></i>
+            </div>
+          ))}
         </div>
       </div>
 
       {/* MAIN CONTENT AREA */}
       <div className="flex-grow-1 overflow-auto">
-        
-        {/* HEADER */}
-        <header className="bg-white border-bottom p-4 d-flex justify-content-between align-items-center sticky-top shadow-sm">
+        <header className="bg-white border-bottom p-4 d-flex justify-content-between align-items-center sticky-top shadow-sm" style={{zIndex: 10}}>
           <div>
             <h4 className="fw-bold mb-0">Agent Performance View</h4>
             <p className="text-muted mb-0 small">
@@ -125,8 +153,7 @@ const SalesAgentView = () => {
         </header>
 
         <div className="p-4">
-          
-          {/* FILTERS CARD */}
+          {/* ... (Filters Card same as before) */}
           <div className="card border-0 shadow-sm rounded-4 mb-4">
             <div className="card-body p-4">
               <div className="row g-3 align-items-end">
@@ -164,7 +191,7 @@ const SalesAgentView = () => {
             </div>
           </div>
 
-          {/* LEADS TABLE */}
+          {/* TABLE */}
           <div className="card border-0 shadow-sm rounded-4 overflow-hidden">
             <div className="table-responsive">
               <table className="table table-hover align-middle mb-0">
@@ -203,28 +230,22 @@ const SalesAgentView = () => {
                             {lead.timeToClose} Days
                           </div>
                         </td>
-                       <td className="text-end pe-4">
-  <div className="d-flex gap-2 justify-content-end">
-    <Link to={`/lead/${lead._id}`} className="btn btn-sm btn-outline-primary rounded-pill px-3">
-      View
-    </Link>
-    {/* Lead udane ka button */}
-    <button 
-      className="btn btn-sm btn-danger rounded-circle"
-      onClick={() => deleteLead(lead._id)}
-    >
-      <i className="bi bi-trash"> Delete </i>
-    </button>
-  </div>
-</td>
+                        <td className="text-end pe-4">
+                          <div className="d-flex gap-2 justify-content-end">
+                            <Link to={`/lead/${lead._id}`} className="btn btn-sm btn-outline-primary rounded-pill px-3">View</Link>
+                            <button 
+                              className="btn btn-sm btn-outline-danger rounded-pill px-3"
+                              onClick={() => confirmAction(lead._id, 'lead')}
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </td>
                       </tr>
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={selectedAgentId === "All" ? "6" : "5"} className="text-center py-5">
-                        <i className="bi bi-search display-1 text-muted opacity-25"></i>
-                        <p className="mt-3 text-muted">No leads found matching your filters.</p>
-                      </td>
+                      <td colSpan={selectedAgentId === "All" ? "6" : "5"} className="text-center py-5 text-muted">No leads found.</td>
                     </tr>
                   )}
                 </tbody>
