@@ -13,20 +13,52 @@ export const LeadProvider = ({ children }) => {
   }, [data]);
 
   // LeadContext.jsx mein deleteLead function update karo:
-const deleteLead = async (id) => {
-  if (window.confirm("Bhai pakka delete karna hai?")) {
-    try {
-      const response = await fetch(`https://anvaya-project-backend.vercel.app/leads/${id}`, {
-        method: 'DELETE',
-      });
-      if (response.ok) {
-        // Bina refresh kiye list se hatane ke liye:
-        setLeads(prev => prev.filter(l => l._id !== id));
-        toast.success("Lead khalaas!");
-      }
-    } catch (err) {
-      toast.error("Network ka locha hai!");
+const deleteLead = (id) => {
+  // Create a custom toast with "Yes" and "No" buttons
+  const confirmToast = ({ closeToast }) => (
+    <div>
+      <p style={{ marginBottom: "10px" }}>Bhai, pakka delete karna hai?</p>
+      <div style={{ display: "flex", gap: "10px" }}>
+        <button 
+          onClick={async () => {
+            await proceedDelete(id);
+            closeToast(); // Close the toast after confirming
+          }}
+          style={{ background: "#dc3545", color: "white", border: "none", padding: "5px 10px", borderRadius: "4px", cursor: "pointer" }}
+        >
+          Haan, kar de!
+        </button>
+        <button 
+          onClick={closeToast}
+          style={{ background: "#6c757d", color: "white", border: "none", padding: "5px 10px", borderRadius: "4px", cursor: "pointer" }}
+        >
+          Nahi!
+        </button>
+      </div>
+    </div>
+  );
+
+  // Trigger the toast
+  toast.info(confirmToast, {
+    position: "top-center",
+    autoClose: false, // Don't auto-close so the user can click
+    closeOnClick: false,
+    draggable: false,
+  });
+};
+
+// Separate function to handle the actual API call
+const proceedDelete = async (id) => {
+  try {
+    const response = await fetch(`https://anvaya-project-backend.vercel.app/leads/${id}`, {
+      method: 'DELETE',
+    });
+    if (response.ok) {
+      setLeads(prev => prev.filter(l => l._id !== id));
+      toast.success("Lead khalaas!");
     }
+  } catch (err) {
+    toast.error("Network ka locha hai!");
   }
 };
 
