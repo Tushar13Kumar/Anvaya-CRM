@@ -5,7 +5,14 @@ const useFetch = (url, initialData) => {
   const [error, setError] = useState(null);
   useEffect(() => {
     setLoading(true);
-    fetch(url)
+
+        const token = localStorage.getItem("prayas-token"); // ADD
+
+    fetch(url , {
+      headers: {
+        "Authorization": `Bearer ${token}` // ADD
+      }
+    })
       .then((res) => res.json())
       .then((data) => {
         setData(data);

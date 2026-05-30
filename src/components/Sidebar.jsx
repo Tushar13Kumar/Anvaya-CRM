@@ -1,6 +1,8 @@
 import { NavLink } from "react-router-dom";
 import { useState } from "react";
 import { useTheme } from "../context/ThemeContext";
+import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 /* ── Icons ── */
 const Icons = {
@@ -81,6 +83,14 @@ const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { isDark, toggleTheme } = useTheme();
   const close = () => setIsOpen(false);
+  // Sidebar component ke andar:
+const { user, logout } = useAuth();
+const navigate = useNavigate();
+
+const handleLogout = () => {
+  logout();
+  navigate('/login');
+};
 
   return (
     <>
@@ -144,12 +154,14 @@ const Sidebar = () => {
 
         {/* Footer */}
         <div className="psb-footer">
-          <div className="psb-avatar">A</div>
-          <div className="psb-footer-text">
-            <span className="psb-footer-name">Admin</span>
-            <span className="psb-footer-role">System Administrator</span>
-          </div>
-        </div>
+  <div className="psb-avatar">{user?.name?.charAt(0)?.toUpperCase() || 'A'}</div>
+  <div className="psb-footer-text">
+    <span className="psb-footer-name">{user?.name || 'Admin'}</span>
+    <span className="psb-footer-role" style={{cursor:'pointer', color:'#dc2626'}} onClick={handleLogout}>
+      Logout →
+    </span>
+  </div>
+</div>
       </aside>
 
       <style>{`
