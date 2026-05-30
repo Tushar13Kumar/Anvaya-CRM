@@ -22,11 +22,15 @@ const AddLeadForm = ({ agents }) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await fetch("https://anvaya-project-backend.vercel.app/leads", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+      // handleSubmit mein sirf headers update karo:
+const response = await fetch("https://anvaya-project-backend.vercel.app/leads", {
+  method: "POST",
+  headers: { 
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${localStorage.getItem("prayas-token")}` // YE ADD KARO
+  },
+  body: JSON.stringify(formData),
+});
       if (response.ok) {
         await fetchLeads();
         toast.success("Lead created successfully!");

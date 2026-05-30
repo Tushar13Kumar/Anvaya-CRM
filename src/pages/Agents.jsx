@@ -32,7 +32,9 @@ const Agents = () => {
       const previousAgents = [...agents];
       setData(agents.filter(a => a._id !== id));
       try {
-        const res = await fetch(`https://anvaya-project-backend.vercel.app/agents/${id}`, { method: "DELETE" });
+        const res = await fetch(`https://anvaya-project-backend.vercel.app/agents/${id}`, { method: "DELETE" ,headers: {
+    "Authorization": `Bearer ${localStorage.getItem("prayas-token")}` // ADD
+  } });
         if (res.ok || res.status === 204) {
           toast.success("Agent removed successfully!");
         } else {

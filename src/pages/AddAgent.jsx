@@ -15,6 +15,8 @@ const AddAgent = () => {
       const res = await fetch("https://anvaya-project-backend.vercel.app/agents", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+            "Authorization": `Bearer ${localStorage.getItem("prayas-token")}`, // ADD
+
         body: JSON.stringify({ name, email }),
       });
       if (res.ok) {

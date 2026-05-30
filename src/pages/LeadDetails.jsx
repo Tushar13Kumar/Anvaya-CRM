@@ -30,11 +30,15 @@ const LeadDetails = () => {
   useEffect(() => { fetchLead(); }, [id]);
 
   const fetchLead = () => {
-    fetch(`https://anvaya-project-backend.vercel.app/leads/${id}`)
-      .then(r => r.json())
-      .then(d => { setLead(d); setEditData(d); })
-      .catch(() => toast.error("Failed to load lead."));
-  };
+  fetch(`https://anvaya-project-backend.vercel.app/leads/${id}`, {
+    headers: {
+      "Authorization": `Bearer ${localStorage.getItem("prayas-token")}` // ADD
+    }
+  })
+    .then(r => r.json())
+    .then(d => { setLead(d); setEditData(d); })
+    .catch(() => toast.error("Failed to load lead."));
+};
 
   const handleUpdate = async () => {
     setSubmitting(true);
@@ -42,8 +46,10 @@ const LeadDetails = () => {
       const agentId = editData.salesAgent?._id || editData.salesAgent;
       const res = await fetch(`https://anvaya-project-backend.vercel.app/leads/${id}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...editData, salesAgent: agentId === "" ? null : agentId }),
+headers: { 
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${localStorage.getItem("prayas-token")}` // ADD
+  },        body: JSON.stringify({ ...editData, salesAgent: agentId === "" ? null : agentId }),
       });
       const result = await res.json();
       if (res.ok) {
@@ -62,8 +68,10 @@ const LeadDetails = () => {
     if (!newComment.trim() || !selectedAgent) return toast.warn("Please select an agent and write a comment.");
     const res = await fetch(`https://anvaya-project-backend.vercel.app/leads/${id}/comments`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text: newComment, authorId: selectedAgent }),
+headers: { 
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${localStorage.getItem("prayas-token")}` // ADD
+  },      body: JSON.stringify({ text: newComment, authorId: selectedAgent }),
     });
     if (res.ok) {
       const updated = await res.json();
