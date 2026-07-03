@@ -10,21 +10,22 @@ export const LeadProvider = ({ children }) => {
   const [error, setError] = useState(null);
 
   const fetchLeads = async () => {
-    setLoading(true);
-    try {
-      const token = localStorage.getItem("prayas-token");
-      const res = await fetch("https://anvaya-project-backend.vercel.app/leads", {
-        headers: { "Authorization": `Bearer ${token}` }
-      });
-      const data = await res.json();
-      if (Array.isArray(data)) setLeads(data);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  setLoading(true);
+  try {
+    const token = localStorage.getItem("prayas-token");
+    console.log("🎯 LeadContext token:", token);    // ADD
+    const res = await fetch("https://anvaya-project-backend.vercel.app/leads", {
+      headers: { "Authorization": `Bearer ${token}` }
+    });
+    const data = await res.json();
+    console.log("📋 Leads data:", data);             // ADD
+    if (Array.isArray(data)) setLeads(data);
+  } catch (err) {
+    setError(err.message);
+  } finally {
+    setLoading(false);
+  }
+};
   useEffect(() => { fetchLeads(); }, []);
 
   const deleteLead = (id) => {

@@ -8,6 +8,9 @@ const useFetch = (url, initialData) => {
   useEffect(() => {
     setLoading(true);
     const token = localStorage.getItem("prayas-token");
+    
+    console.log("🔍 Fetching URL:", url);        // ADD
+    console.log("🔑 Token:", token);              // ADD
 
     fetch(url, {
       headers: {
@@ -16,11 +19,12 @@ const useFetch = (url, initialData) => {
     })
       .then((res) => res.json())
       .then((data) => {
-        // ✅ Agar array aaya toh set karo, warna initialData rakho
+        console.log("📦 Response from", url, ":", data); // ADD
         if (Array.isArray(data)) {
           setData(data);
         } else {
-          setData(initialData); // error object aaya toh crash mat karo
+          console.warn("⚠️ Array nahi aaya:", data);     // ADD
+          setData(initialData);
         }
       })
       .catch((error) => setError(error.message))
