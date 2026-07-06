@@ -12,13 +12,14 @@ const AddAgent = () => {
     e.preventDefault();
     setSubmitting(true);
     try {
-      const res = await fetch("https://anvaya-project-backend.vercel.app/agents", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-            "Authorization": `Bearer ${localStorage.getItem("prayas-token")}`, // ADD
-
-        body: JSON.stringify({ name, email }),
-      });
+     const res = await fetch("https://anvaya-project-backend.vercel.app/agents", {
+  method: "POST",
+  headers: { 
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${localStorage.getItem("prayas-token")}`
+  },
+  body: JSON.stringify({ name, email }),
+});
       if (res.ok) {
         toast.success("Agent added successfully!");
         navigate("/agents");
