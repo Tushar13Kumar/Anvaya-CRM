@@ -2,21 +2,36 @@ import React, { useState } from 'react';
 import { useLeads } from '../context/LeadContext';
 import { toast } from 'react-toastify';
 
+const AVAILABLE_TAGS = ["High Value", "Follow-up", "Urgent", "New Client", "Referral", "Cold Lead"];
+
+
+
 const AddLeadForm = ({ agents }) => {
+  
   const [formData, setFormData] = useState({
-    name: "",
-    source: "Website",
-    salesAgent: "",
-    status: "New",
-    priority: "Medium",
-    timeToClose: 10
-  });
+  name: "",
+  source: "Website",
+  salesAgent: "",
+  status: "New",
+  priority: "Medium",
+  timeToClose: 10,
+  tags: []  // YE ADD KARO
+});
   const [loading, setLoading] = useState(false);
   const { fetchLeads } = useLeads();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
+  const handleTagToggle = (tag) => {
+  setFormData(prev => ({
+    ...prev,
+    tags: prev.tags.includes(tag)
+      ? prev.tags.filter(t => t !== tag)
+      : [...prev.tags, tag]
+  }));
+};
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,8 +49,7 @@ const response = await fetch("https://anvaya-project-backend.vercel.app/leads", 
       if (response.ok) {
         await fetchLeads();
         toast.success("Lead created successfully!");
-        setFormData({ name: "", source: "Website", salesAgent: "", status: "New", priority: "Medium", timeToClose: 10 });
-      } else {
+setFormData({ name: "", source: "Website", salesAgent: "", status: "New", priority: "Medium", timeToClose: 10, tags: [] });      } else {
         toast.error("Failed to save lead. Please check your data.");
       }
     } catch (err) {
@@ -151,6 +165,33 @@ const response = await fetch("https://anvaya-project-backend.vercel.app/leads", 
             </select>
           </div>
         </div>
+        <div className="alf-group">
+  <label className="alf-label">Tags</label>
+  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+    {AVAILABLE_TAGS.map(tag => (
+      <button
+        key={tag}
+        type="button"
+        onClick={() => handleTagToggle(tag)}
+        style={{
+          padding: '4px 10px',
+          borderRadius: '20px',
+          fontSize: '11px',
+          fontWeight: '500',
+          fontFamily: 'Sora, sans-serif',
+          cursor: 'pointer',
+          border: '1.5px solid',
+          borderColor: formData.tags.includes(tag) ? '#6366f1' : 'var(--border)',
+          background: formData.tags.includes(tag) ? 'rgba(99,102,241,0.15)' : 'var(--surface2)',
+          color: formData.tags.includes(tag) ? '#a5b4fc' : 'var(--text-muted)',
+          transition: 'all 0.15s'
+        }}
+      >
+        {tag}
+      </button>
+    ))}
+  </div>
+</div>
 
         <div className="alf-divider" />
 

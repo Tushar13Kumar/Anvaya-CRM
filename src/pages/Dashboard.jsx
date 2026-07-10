@@ -325,9 +325,9 @@ const Dashboard = () => {
               <table className="db-table">
                 <thead>
                   <tr>
-                    <th>Client</th><th>Status</th><th>Agent</th><th>Priority</th>
-                    <th style={{ textAlign: 'right' }}>Actions</th>
-                  </tr>
+<th>Client</th><th>Status</th><th>Agent</th><th>Priority</th><th>Tags</th>
+<th style={{ textAlign: 'right' }}>Actions</th>
+             </tr>
                 </thead>
                 <tbody>
                   {finalLeads?.length > 0 ? finalLeads.map(lead => {
@@ -355,6 +355,17 @@ const Dashboard = () => {
                         <td>
                           <span className="db-badge" style={{ background: pc.bg, color: pc.color }}>{lead.priority}</span>
                         </td>
+                       <td>
+  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+    {lead.tags?.length > 0 ? lead.tags.map(tag => (
+      <span key={tag} style={{
+        padding: '2px 8px', borderRadius: '20px', fontSize: '10px',
+        fontWeight: '500', background: 'rgba(99,102,241,0.15)',
+        color: '#a5b4fc', border: '1px solid rgba(99,102,241,0.3)'
+      }}>{tag}</span>
+    )) : <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>—</span>}
+  </div>
+</td>
                         <td style={{ textAlign: 'right' }}>
                           <Link to={`/lead/${lead._id}`} className="db-view">View <IcoArrow /></Link>
                           <button className="db-delete" onClick={() => deleteLead(lead._id)}><IcoTrash /> Delete</button>
@@ -362,7 +373,7 @@ const Dashboard = () => {
                       </tr>
                     );
                   }) : (
-                    <tr><td colSpan="5" className="db-empty">No leads found. Try adjusting filters.</td></tr>
+                          <tr><td colSpan="6" className="db-empty">No leads found. Try adjusting filters.</td></tr>
                   )}
                 </tbody>
               </table>

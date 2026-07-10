@@ -234,6 +234,43 @@ headers: {
                 <p className="ld-field-val">{lead.status}</p>
               )}
             </div>
+            {/* Tags */}
+<div>
+  <p className="ld-field-label">Tags</p>
+  {isEditing ? (
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+      {["High Value","Follow-up","Urgent","New Client","Referral","Cold Lead"].map(tag => (
+        <button key={tag} type="button"
+          onClick={() => setEditData(prev => ({
+            ...prev,
+            tags: prev.tags?.includes(tag)
+              ? prev.tags.filter(t => t !== tag)
+              : [...(prev.tags || []), tag]
+          }))}
+          style={{
+            padding: '3px 10px', borderRadius: '20px', fontSize: '11px',
+            fontWeight: '500', fontFamily: 'Sora,sans-serif', cursor: 'pointer',
+            border: '1.5px solid',
+            borderColor: editData.tags?.includes(tag) ? '#6366f1' : 'var(--border)',
+            background: editData.tags?.includes(tag) ? 'rgba(99,102,241,0.15)' : 'var(--surface2)',
+            color: editData.tags?.includes(tag) ? '#a5b4fc' : 'var(--text-muted)',
+          }}>
+          {tag}
+        </button>
+      ))}
+    </div>
+  ) : (
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+      {lead.tags?.length > 0 ? lead.tags.map(tag => (
+        <span key={tag} style={{
+          padding: '3px 10px', borderRadius: '20px', fontSize: '11px',
+          fontWeight: '500', background: 'rgba(99,102,241,0.15)',
+          color: '#a5b4fc', border: '1px solid rgba(99,102,241,0.3)'
+        }}>{tag}</span>
+      )) : <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>No tags</span>}
+    </div>
+  )}
+</div>
           </div>
         </div>
 
