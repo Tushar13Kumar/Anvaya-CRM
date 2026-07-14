@@ -10,6 +10,8 @@ const PRIORITY_CONFIG = {
   'Low':    { bg: 'rgba(34,197,94,0.15)',  color: '#16a34a' },
 };
 
+const AVAILABLE_TAGS = ["High Value", "Follow-up", "Urgent", "New Client", "Referral", "Cold Lead"];
+
 const LeadStatusView = () => {
   const { leads, loading } = useLeads();
   const { data: agents } = useFetch("https://anvaya-project-backend.vercel.app/agents", []);
@@ -17,10 +19,14 @@ const LeadStatusView = () => {
   const [activeStatus, setActiveStatus] = useState("New");
   const [selectedAgent, setSelectedAgent] = useState("All");
   const [sortBy, setSortBy] = useState("Time to Close");
+  const [selectedTag, setSelectedTag] = useState("All");
 
   const sortedLeads = [...(leads || [])]
-    .filter(l => l.status === activeStatus && (selectedAgent === "All" || l.salesAgent?._id === selectedAgent))
-    .sort((a, b) => {
+.filter(l => 
+  l.status === activeStatus && 
+  (selectedAgent === "All" || l.salesAgent?._id === selectedAgent) &&
+  (selectedTag === "All" || l.tags?.includes(selectedTag))
+)    .sort((a, b) => {
       if (sortBy === "Time to Close") return (a.timeToClose || 0) - (b.timeToClose || 0);
       if (sortBy === "Priority") {
         const o = { High: 3, Medium: 2, Low: 1 };
@@ -161,6 +167,12 @@ const LeadStatusView = () => {
                 <option value="All">All Agents</option>
                 {agents.map(a => <option key={a._id} value={a._id}>{a.name}</option>)}
               </select>
+              {/* YE NAYA ADD KARO: */}
+  <select className="lsv-select" value={selectedTag} onChange={e => setSelectedTag(e.target.value)}>
+    <option value="All">All Tags</option>
+    {AVAILABLE_TAGS.map(tag => <option key={tag} value={tag}>{tag}</option>)}
+  </select>
+
               <select className="lsv-select" value={sortBy} onChange={e => setSortBy(e.target.value)}>
                 <option value="Time to Close">Fastest Close</option>
                 <option value="Priority">By Priority</option>
